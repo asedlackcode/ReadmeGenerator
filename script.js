@@ -49,15 +49,28 @@ let promptUser = () => {
     {
         type: "input",
         name: "githubEmail",
-        message: "GitHub Email"
+        message: "GitHub Username"
     },
     
         
 ])};
 
+const GHemail = [];
+const avatar = [];
 
+const generateREADme = (answers, GHemail, avatar) => {
+    axios.get("https://api.github.com/users/" + answers.githubEmail)
+        .then(function(res) { 
+            GHemail.push(res.data.email);
+            avatar.push(res.data.avatar_url)
+            if (res.data.githubEmail = "null"){
+            console.log("nothing there");
+            //console.log(res.data);
+        }})
+        
+        
+        .catch(err => console.log(err));
 
-const generateREADme = (answers, email, avatar_url) => {
     var str =  `#Project 
    ${answers.Project}
 
@@ -82,14 +95,10 @@ const generateREADme = (answers, email, avatar_url) => {
    #Tests
    ${answers.Tests}
 
-   #Github Email
-   ${answers.githubEmail}
-`
-    axios.get("https://api.github.com/users/" + answers.githubEmail)
-        .then(res => answers.githubEmail = (res.data.email))
-        .catch(err => console.log(err));  
-   
 
+   #Github Account
+   ${avatar, GHemail}
+`
    return str
 }
 
@@ -101,7 +110,7 @@ const generateREADme = (answers, email, avatar_url) => {
 async function init() {
     try {
         const answers = await promptUser();
-        const readme = generateREADme(answers, email, "https://asdf.com/url/to/avatar");
+        const readme = generateREADme(answers, GHemail, avatar);
         await writeFileAsync("README.md", readme)
         console.log("success")
     }   catch(err){
